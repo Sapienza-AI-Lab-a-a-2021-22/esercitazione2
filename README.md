@@ -233,7 +233,7 @@ normalizzazione, cosiddetta
 [feature normalization](https://en.wikipedia.org/wiki/Feature_scaling). Questa
 strategia è semplice, dobbiamo solo scalare i valori in modo che siano
 nell'intervallo [0-1]. In particolare vorremo
-[riscalaree](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling)
+[riscalare](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling)
 l'immagine sottraendo il minimo da tutti i valori e dividendoli per il range dei
 dati, vale a dire per la differenza tra massimo e minimo di tutti i valori. 
 Chiaramente se il range è 0, impostate l'immagine a 0. 
@@ -246,67 +246,70 @@ Dovrebbe ritornare due immagini, l'ampiezza e la direzione del gradiente
 usare la trovate [qui](https://en.wikipedia.org/wiki/Sobel_operator#Formulation). 
 Possiamo visualizzarle usando la funzione di normalizzazione (in quanto di 
 base non sono vere immagini, ma un risultato di un calcolo matematico, 
-quindi non è detto che i loro valori siano compresi tra 0 e 1).
+quindi non è detto che i loro valori siano compresi tra 0 e 1. In 
+particolare i valori della direzione sono tra 0 e 2π).
 
 Il test relativo dovrebbe darvi questa immagine:
 
 ![](figs/magnitude.png)
 
-### 4.4 Make a colorized representation ###
+### 4.4 Filtro "Colorize" ###
 
-Now using your sobel filter try to make a cool, stylized one. Fill in the
-function `Image colorize_sobel(const Image& im)`. I used the magnitude as the
-saturation and value of an image and the angle (theta) as the hue and then used
-our `hsv_to_rgb` function we wrote before. We want the output image to be a
-valid image so normalize the range to 0-1 by:
+Con il filtro Sobel si può creare un altro filtro di grade effetto. 
+Completate la funzione `Image colorize_sobel(const Image& im)`. Usate 
+l'ampiezza del gradiente come la saturation e il value e la direzione come 
+hue, dopodiché usate la funzione `hsv_to_rgb` che avete implementato l'altra 
+volta per riportare l'immagine a rgb. Vogliamo che l'output sia una immagine 
+valida, quindi dovete normalizzare tra 0 e 1 in questo modo:
 
-- Feature normalizing the magnitude; and
-- Normalizing the angle by dividing by 2π and adding 0.5.
+- fate feature normalization dell'ampiezza
+- normalizzate la direzione dividendola per 2π e aggiungendo 0.5
 
-Add some smoothing to the original image (a Gaussian with sigma 4) inside
-of `colorize_sobel`, so it looks even nicer.
+Aggiungete un po' di regolarizzazione all'immagine originale (filtro 
+gaussiano con sigma 4) all'interno di `colorize_sobel`, così da renderla più 
+gradevole.
 
 ![](figs/lcolorized.png)
 
-### 4.5 (Extra Credit) Let's blur but slightly differently ###
+### 4.5 Un altro tipo di blur ###
 
-Now let's try blurring by not just assigning weights to surrounding pixels based
-on their spatial location in relation to the center pixel but also by how far
-away they are in terms of color from the center pixel. The idea of
-the [bilateral filter](https://cs.jhu.edu/~misha/ReadingSeminar/Papers/Tomasi98.pdf)
-is to blur everything in the image but the color edges.
+Adesso facciamo il blur (sfocatura) non semplicemente rispetto alla 
+posizione relativa rispetto al centro del filtro, ma rispetto alla distanza 
+in termini di **colore** di un pixel dal pixel centrale. L'idea del 
+[bilateral filter](https://cs.jhu.edu/~misha/ReadingSeminar/Papers/Tomasi98.pdf) 
+è quella di sfocare tutto eccetto i bordi del colore.
 
-Once again we will be forming a filter, except now it will be different per
-pixel. The weights for a pixel's filter can be described as such:
+Ancora una volta creeremo un filtro, ma questa volta sarà differente per 
+pigni pixel. Questo può esserer descritto così:
 
 ![W](figs/bilateral_W.png)
 
-where the individual weights are
+dove i pesi sono dati da:
 
 ![W](figs/bilateral_wij.png)
 
-(the definition for G is above in Section 2.4)
+(la definizione di G è sopra nella sezione 2.4)
 
-and the normalization factor is
+e il fattore di normalizzazinoe è
 
 ![W](figs/bilateral_norm.png)
 
-for a kernel of size (2k+1).
+per un kernel di dimensione (2k+1).
 
-Hint: For the spatial Gaussian, you can use the `make_gaussian_filter` you
-implemented above. For the color distance Gaussian, you should compute the
-Gaussian with the distance between the pixel values for each channel separately
-and then apply a Gaussian with `sigma2`.
+Suggerimento: per la gaussiana, potete usare la funzione 
+`make_gaussian_filter` che avete già implementato. Per la gaussiana di 
+distanza di colore, dovreste calcolare la gaussiana della distanza tra i 
+valori dei pixel per ogni canale separatamente e poi applicare una gaussian 
+con `sigma2`.
 
-Fill in the
-function `Image bilateral_filter(const Image& im, float sigma1, float sigma2)`
-where `sigma1` is for the spatial gaussian and `sigma2` is for the color
-distance Gaussian. Use a kernel size of `6*sigma1` for the bilateral filter.
+Completate la funzione `Image bilateral_filter(const Image& im, float sigma1, float sigma2)`
+dove `sigma1` è per la gaussiana spaziale e `sigma2` per quella di distanza 
+di colore. Usate un kernel di dimensione `6*sigma1` per il filtro bilaterale.
 
-Your image should have a similar effect to the image below so we suggest testing
-out a few spatial and color sigma parameters before submitting your final image(
-you can find the before image in `data/bilateral_raw.png`, note that it is 40x40
-pixels and is being upsampled in this README). Good luck!
+La vostra immagine dovrebbe avere un effetto simile a quello che vedete 
+sotto, ma dovrete fare un po' di tuning dei sigma. L'immagine originale è 
+`data/bilateral_raw.png`; fate caso che è 40x40, ma è stata ingrandita per 
+questo README)
 
 Before                 |  After
 :-----------------:|:------------------:
@@ -314,7 +317,3 @@ Before                 |  After
 
 ![cat](figs/bilateral_cat.png)
 
-## 5. Turn it in ##
-
-Turn in your `resize_image.cpp` and `filter_image.cpp` on Canvas under
-Assignment 2.
