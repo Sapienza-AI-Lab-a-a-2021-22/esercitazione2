@@ -90,37 +90,36 @@ Dovete implementare la formula discussa in classe:
 
 ![covolution](figs/convolution.png)
 
-Now it's time to fill
-in `Image convolve_image(const Image& im, const Image& filter, bool preserve)`.
-For this function we have a few scenarios. With normal convolutions we do a
-weighted sum over an area of the image. With multiple channels in the input
-image there are a few possible cases we want to handle:
+Completate `Image convolve_image(const Image& im, const Image& filter, bool preserve)`.
+Per questa funzine ci sono due possibilità. Con le convoluzioni normali 
+facciamo una somma pesata su un'area dell'immagine. Con più canali teniamo 
+conto di più possibilità:
 
-- If `preserve` is set to `true` we should produce an image with the same number
-  of channels as the input. This is useful if, for example, we want to run a box
-  filter over an RGB image and get out an RGB image. This means each channel in
-  the image will be filtered separately by the same filter kernel. UNLESS:
-- If `preserve` is set to `false`, we should return a 1-channel image, which is
-  produced by applying the filter kernel to each channel, and then adding the
-  channels together.
+- Se il parametro `preserve` è impostato a `true`, la funzioe dovrebbe 
+  produrre un immagine con lo stesso numero di canali dell'input. Questo è 
+  utile per esempio, se vogliamo applicare il box-filter ad un'immagine RGB 
+  per ottenere un'altra immagine RGB. Questo significa che ogni canale verrà 
+  filtrato separatamente dallo stesso kernel. 
+- Se `preserve` è a `false` dovremmo ritornare un'immagine con un solo 
+  canale prodotto applicndo il filtro and ogni canale e poi summandoli 
+  insieme in un unico canale. 
 
-Also, `filter` should only ever have 1 channel. I check this with an `assert`.
+Naturalmente, `filter` dovrebbe avere 1 canale. C'è un `assert` nel codice 
+che verifica questo.
+Quando avete finito, testate la convoluzione applicando il filtro alla 
+nostra immagine (`test_convolution` dentro `test1.cpp`).
 
-Once you are done, test out your convolution by filtering our image (Section 2.1
-in test1.cpp)!
-
-We'll get some output that looks like this:
+L'output dovrebbe essere questo:
 
 ![covolution](figs/dog-box7.png)
 
-Now we can use this to perform our thumbnail operation(Section 2.2 in test1.cpp)
-.
+Ora possiamo effettuare l'operazine di ridiuzione dell'immagine:
 
 ![covolution](figs/dogthumb.png)
 
-Look at how much better our new resized thumbnail is!
+Potete vedere quanto è migliorata!
 
-Resize                     |  Blur and Resize
+Resize                     |  Blur e Resize
 :-------------------------:|:-------------------------:
 ![](figs/dog7th-nn.png)    | ![](figs/dogthumb.png)
 
