@@ -124,7 +124,7 @@ Resize                     |  Blur e Resize
 ### 2.3 Altri filtri ###
 
 Completate le funzioni `Image make_highpass_filter()`
-, `Image make_sharpen_filter()`, e `Image make_emboss_filter()`. Il primo lo 
+, `Image make_sharpen_filter()`, e `Image make_emboss_filter()`. Il primo lo
 abbiamo visto a lezione, gli altri due sono nuovi.
 
 Highpass                   |  Sharpen                  | Emboss
@@ -135,114 +135,120 @@ Highpass                   |  Sharpen                  | Emboss
 
 ### 2.4 Implementazione del kernel Gaussiano ###
 
-Implementate la funzione `Image make_gaussian_filter(float sigma)` che 
-prende una deviazione standard come input e ritorna un filtro gaussiano. 
-Quanto dovrebbe essere grande il kernel del filtro? il 99% dell'area di una 
-gaussiana si trova a +/- 3 deviazioni stadard, quindi il kernel deve essere 
-6 volte sigma. Allo stesso tempo, ricordatevi che il kernel deve avere un 
-numero dispari di righe e colonne, quindi sarà 6x sigma + 1.
+Implementate la funzione `Image make_gaussian_filter(float sigma)` che prende
+una deviazione standard come input e ritorna un filtro gaussiano. Quanto
+dovrebbe essere grande il kernel del filtro? il 99% dell'area di una gaussiana
+si trova a +/- 3 deviazioni stadard, quindi il kernel deve essere 6 volte sigma.
+Allo stesso tempo, ricordatevi che il kernel deve avere un numero dispari di
+righe e colonne, quindi sarà 6x sigma + 1.
 
-Dobbiamo riempire i valori del kernel con dei valori. Usate la densità di 
+Dobbiamo riempire i valori del kernel con dei valori. Usate la densità di
 probabilità della gaussiana bidimensionale:
 
 ![2d gaussian](figs/2dgauss.png)
 
-Ovviamente questa è un'approssimazione, ma è efficace. Ricordate che la 
-simma dei coefficienti del filtro deve essere 1. 
+Ovviamente questa è un'approssimazione, ma è efficace. Ricordate che la simma
+dei coefficienti del filtro deve essere 1.
 
 A questo punto il test della funzione di blur dovrebbe funzionare:
 
 ![blurred dog](figs/dog-gauss2.png)
 
 ## 3. Immagini ibride ##
-Come abbiamo visto a lezione, dai filtri passa basso come quello gaussiano è 
-possibile ricavare anche quelli passa alto come differenza tra l'immagine 
-originale e quella a basse frequenze. Con questa proprietà possiamo fare 
-cose interessanti, come ad esempio questo[this tutorial on retouching skin](https://petapixel.com/2015/07/08/primer-using-frequency-separation-in-photoshop-for-skin-retouching/)
+
+Come abbiamo visto a lezione, dai filtri passa basso come quello gaussiano è
+possibile ricavare anche quelli passa alto come differenza tra l'immagine
+originale e quella a basse frequenze. Con questa proprietà possiamo fare cose
+interessanti, come ad esempio
+questo[this tutorial on retouching skin](https://petapixel.com/2015/07/08/primer-using-frequency-separation-in-photoshop-for-skin-retouching/)
 in Photoshop.
 
-Possiamo anche produrre immagini molto particolari come queste [really 
-trippy images](http://cvcl.mit.edu/hybrid/OlivaTorralb_Hybrid_Siggraph06.pdf)
-che sembrano diverse a seconda le guardiamo da vicino o da lontano. 
-Quest'ultima cosa è quella che implementeremo. Queste immagini ibride 
-prendono l'informazione a bassa frequenza da una immagine e quella ad alta 
-frequenza dall'altra. Ecco un esempio:
+Possiamo anche produrre immagini molto particolari come
+queste [really trippy images](http://cvcl.mit.edu/hybrid/OlivaTorralb_Hybrid_Siggraph06.pdf)
+che sembrano diverse a seconda le guardiamo da vicino o da lontano. Quest'ultima
+cosa è quella che implementeremo. Queste immagini ibride prendono l'informazione
+a bassa frequenza da una immagine e quella ad alta frequenza dall'altra. Ecco un
+esempio:
 
 Small                     |  Medium | Large
 :-------------------------:|:-------:|:------------------:
 ![](figs/marilyn-einstein-small.png)   | ![](figs/marilyn-einstein-medium.png) | ![](figs/marilyn-einstein.png)
 
 Se non credete al ridimensionamento fatto, controllate pure la figura  
-figs/marilyn-einstein.png` e guardatela da vicino e da lontano. Il fenomeno 
-sarà lo stesso.
+figs/marilyn-einstein.png` e guardatela da vicino e da lontano. Il fenomeno sarà
+lo stesso.
 
-Il vostro lavoro e produrre un'immagine simile. Ma invece di riprodurre un 
-personaggio celebre trapassato, useremo immagini di personaggi immaginari. 
-In particolare sfrutteremo la trama segreta di Harry Potter in cui Silente è 
-in realtà Ron Weasly che viaggia nel tempo. Non ci credete? Le immagini non 
+Il vostro lavoro e produrre un'immagine simile. Ma invece di riprodurre un
+personaggio celebre trapassato, useremo immagini di personaggi immaginari. In
+particolare sfrutteremo la trama segreta di Harry Potter in cui Silente è in
+realtà Ron Weasly che viaggia nel tempo. Non ci credete? Le immagini non
 mentono!
 
 Small                     | Large
 :-------------------------:|:------------------:
 ![](figs/ronbledore-small.jpg)   | ![](figs/ronbledore.jpg)
 
-Per questa task dovrete estrarre le alte e basse frequenze da alcune 
-immagini. Sapete già come ottenere le basse frequenze con il filtro 
-gaussiano. Per ottenere le alte dovete sottrarre le basse frequenze 
-dall'immagine originale, vale a dire dal campo `data`. 
+Per questa task dovrete estrarre le alte e basse frequenze da alcune immagini.
+Sapete già come ottenere le basse frequenze con il filtro gaussiano. Per
+ottenere le alte dovete sottrarre le basse frequenze dall'immagine originale,
+vale a dire dal campo `data`.
 
 Completate la funzione `Image add_image(const Image& a, const Image& b)`
-e `Image sub_image(const Image& a, const Image& b)` in modo che effettui 
-queste trasformazioni. Probabilmente dovrebbero includere alcuni check che 
-l'immagine rimanga della stessa dimensione. 
-Il risultato prodotto dal test dovrebbe essere:
+e `Image sub_image(const Image& a, const Image& b)` in modo che effettui queste
+trasformazioni. Probabilmente dovrebbero includere alcuni check che l'immagine
+rimanga della stessa dimensione. Il risultato prodotto dal test dovrebbe essere:
 
 Low frequency           |  High frequency | Reconstruction
 :-------------------------:|:-------:|:------------------:
 ![](figs/low-frequency.png)   | ![](figs/high-frequency.png) | ![](figs/reconstruct.png)
 
-Avete notato che l'immagine ad alta frequanca va in overflow quando la 
-salviamo su disco? È un problema per noi? Perché?
+Avete notato che l'immagine ad alta frequanca va in overflow quando la salviamo
+su disco? È un problema per noi? Perché?
 
-Usate queste funzioni per creare la vostra immagine ibrida. Ci sarà bisogno 
-di trovare la giusta deviazione standard perché funzioni. Non esiste un 
-valore che vada bene per tutte le immagini. 
+Usate queste funzioni per creare la vostra immagine ibrida. Ci sarà bisogno di
+trovare la giusta deviazione standard perché funzioni. Non esiste un valore che
+vada bene per tutte le immagini.
 
-## 4. Sobel filters ##
+## 4. Filtri di Sobel ##
 
-The [Sobel filter](https://www.researchgate.net/publication/239398674_An_Isotropic_3x3_Image_Gradient_Operator)
-is cool because we can estimate the gradients and direction of those gradients
-in an image. They should be straightforward now that you all are such pros at
-image filtering.
+I [filtri di Sobel](https://www.researchgate.
+net/publication/239398674_An_Isotropic_3x3_Image_Gradient_Operator) sono utili
+perché ci permettono di calcolare i gradienti e le direzioni di quei gradienti
+in una immagine. Dovrebbero essere semplici da implementare a questo punto.
 
-### 4.1 Make the filters ###
+### 4.1 Implementatet i filtri ###
 
-First implement the functions `make_gx_filter` and `make_gy_filter`
-in `filter_image.cpp` to make our sobel filters. They are for estimating the
-gradient in the x and y direction:
+Prima implementate le funzioni `make_gx_filter` e `make_gy_filter` in
+`filter_image.cpp` per creare il filtro di Sobel. Queste stimano il gradiente
+nelle direzioni x e y.
 
 Gx                 |  Gy
 :-----------------:|:------------------:
 ![](figs/gx.png)   |  ![](figs/gy.png)
 
-### 4.2 One more normalization... ###
+### 4.2 Un altra normalizzazione ###
 
-To visualize our sobel operator we'll want another normalization
-strategy, [feature normalization](https://en.wikipedia.org/wiki/Feature_scaling)
-. This strategy is simple, we just want to scale the image so all values lie
-between [0-1]. In particular we will
-be [rescaling](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling) the
-image by subtracting the minimum from all values and dividing by the range of
-the data. If the range is zero you should just set the whole image to 0 (don't
-divide by 0 that's bad).
+Per visualizzare l'operatore di Sobel abbiamo bisogno di un'altra strategia di
+normalizzazione, cosiddetta
+[feature normalization](https://en.wikipedia.org/wiki/Feature_scaling). Questa
+strategia è semplice, dobbiamo solo scalare i valori in modo che siano
+nell'intervallo [0-1]. In particolare vorremo
+[riscalaree](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling)
+l'immagine sottraendo il minimo da tutti i valori e dividendoli per il range dei
+dati, vale a dire per la differenza tra massimo e minimo di tutti i valori. 
+Chiaramente se il range è 0, impostate l'immagine a 0. 
 
-### 4.3 Calculate gradient magnitude and direction ###
+### 4.3 Calculate l'ampiezza e la direzione del gradiente ###
 
-Fill in the function `pair<Image,Image> sobel_image(const Image& im)`. It should
-return two images, the gradient magnitude and direction. The strategy can be
-found [here](https://en.wikipedia.org/wiki/Sobel_operator#Formulation). We can
-visualize our magnitude using our normalization function(Section 4.1 in
-test1.cpp).
+Completate la funzione `pair<Image,Image> sobel_image(const Image& im)`. 
+Dovrebbe ritornare due immagini, l'ampiezza e la direzione del gradiente 
+(visto che è un vettore, si rappresenta con modulo e fase). LA strategia da 
+usare la trovate [qui](https://en.wikipedia.org/wiki/Sobel_operator#Formulation). 
+Possiamo visualizzarle usando la funzione di normalizzazione (in quanto di 
+base non sono vere immagini, ma un risultato di un calcolo matematico, 
+quindi non è detto che i loro valori siano compresi tra 0 e 1).
+
+Il test relativo dovrebbe darvi questa immagine:
 
 ![](figs/magnitude.png)
 
