@@ -154,63 +154,59 @@ A questo punto il test della funzione di blur dovrebbe funzionare:
 
 ![blurred dog](figs/dog-gauss2.png)
 
-## 3. Hybrid images ##
+## 3. Immagini ibride ##
+Come abbiamo visto a lezione, dai filtri passa basso come quello gaussiano è 
+possibile ricavare anche quelli passa alto come differenza tra l'immagine 
+originale e quella a basse frequenze. Con questa proprietà possiamo fare 
+cose interessanti, come ad esempio questo[this tutorial on retouching skin](https://petapixel.com/2015/07/08/primer-using-frequency-separation-in-photoshop-for-skin-retouching/)
+in Photoshop.
 
-Gaussian filters are cool because they are a true low-pass filter for the image.
-This means when we run them on an image we only get the low-frequency changes in
-an image like color. Conversely, we can subtract this low-frequency information
-from the original image to get the high frequency information!
-
-Using this frequency separation we can do some pretty neat stuff. For example,
-check
-out [this tutorial on retouching skin](https://petapixel.com/2015/07/08/primer-using-frequency-separation-in-photoshop-for-skin-retouching/)
-in Photoshop (but only if you want to).
-
-We can also
-make [really trippy images](http://cvcl.mit.edu/hybrid/OlivaTorralb_Hybrid_Siggraph06.pdf)
-that look different depending on if you are close or far away from them. That's
-what we'll be doing. They are hybrid images that take low frequency information
-from one image and high frequency info from another. Here's a picture of....
-what exactly?
+Possiamo anche produrre immagini molto particolari come queste [really 
+trippy images](http://cvcl.mit.edu/hybrid/OlivaTorralb_Hybrid_Siggraph06.pdf)
+che sembrano diverse a seconda le guardiamo da vicino o da lontano. 
+Quest'ultima cosa è quella che implementeremo. Queste immagini ibride 
+prendono l'informazione a bassa frequenza da una immagine e quella ad alta 
+frequenza dall'altra. Ecco un esempio:
 
 Small                     |  Medium | Large
 :-------------------------:|:-------:|:------------------:
 ![](figs/marilyn-einstein-small.png)   | ![](figs/marilyn-einstein-medium.png) | ![](figs/marilyn-einstein.png)
 
-If you don't believe my resizing check out `figs/marilyn-einstein.png` and view
-it from far away and up close. Sorta neat, right?
+Se non credete al ridimensionamento fatto, controllate pure la figura  
+figs/marilyn-einstein.png` e guardatela da vicino e da lontano. Il fenomeno 
+sarà lo stesso.
 
-Your job is to produce a similar image. But instead of famous dead people we'll
-be using famous fictional people! In particular, we'll be exposing the secret (
-but totally canon) sub-plot of the Harry Potter franchise that Dumbledore is a
-time-traveling Ron Weasely. Don't trust me?? The images don't lie! Wake up
-sheeple!
+Il vostro lavoro e produrre un'immagine simile. Ma invece di riprodurre un 
+personaggio celebre trapassato, useremo immagini di personaggi immaginari. 
+In particolare sfrutteremo la trama segreta di Harry Potter in cui Silente è 
+in realtà Ron Weasly che viaggia nel tempo. Non ci credete? Le immagini non 
+mentono!
 
 Small                     | Large
 :-------------------------:|:------------------:
 ![](figs/ronbledore-small.jpg)   | ![](figs/ronbledore.jpg)
 
-For this task you'll have to extract the high frequency and low frequency from
-some images. You already know how to get low frequency, using your gaussian
-filter. To get high frequency you just subtract the low frequency data from the
-original image.
+Per questa task dovrete estrarre le alte e basse frequenze da alcune 
+immagini. Sapete già come ottenere le basse frequenze con il filtro 
+gaussiano. Per ottenere le alte dovete sottrarre le basse frequenze 
+dall'immagine originale, vale a dire dal campo `data`. 
 
-Fill in `Image add_image(const Image& a, const Image& b)`
-and `Image sub_image(const Image& a, const Image& b)` so we can perform our
-transformations. They should probably include some checks that the images are
-the same size and such. Now we should be able to get these results (Section 2.7
-in test1.cpp);
+Completate la funzione `Image add_image(const Image& a, const Image& b)`
+e `Image sub_image(const Image& a, const Image& b)` in modo che effettui 
+queste trasformazioni. Probabilmente dovrebbero includere alcuni check che 
+l'immagine rimanga della stessa dimensione. 
+Il risultato prodotto dal test dovrebbe essere:
 
 Low frequency           |  High frequency | Reconstruction
 :-------------------------:|:-------:|:------------------:
 ![](figs/low-frequency.png)   | ![](figs/high-frequency.png) | ![](figs/reconstruct.png)
 
-Note, the high-frequency image overflows when we save it to disk? Is this a
-problem for us? Why or why not?
+Avete notato che l'immagine ad alta frequanca va in overflow quando la 
+salviamo su disco? È un problema per noi? Perché?
 
-Use these functions to recreate your own Ronbledore image. You will need to tune
-your standard deviations for the gaussians you use. You will probably need
-different values for each image to get it to look good.
+Usate queste funzioni per creare la vostra immagine ibrida. Ci sarà bisogno 
+di trovare la giusta deviazione standard perché funzioni. Non esiste un 
+valore che vada bene per tutte le immagini. 
 
 ## 4. Sobel filters ##
 
