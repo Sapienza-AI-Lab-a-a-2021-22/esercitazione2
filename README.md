@@ -59,10 +59,9 @@ Come detto a lezione dobbiamo filtrare, prima di ridurre!
 
 ## 2. Filtraggio delle immagini usando le convoluzioni ##
 
-Inizieremo filtrando l'immagine con un box filter. Ci sono modi più veloci 
-di fare questo, ma noi lo implementeremo in maniera naif con una 
-convoluzione, perché sarà lo stesso modo con cui opereremo i filtri 
-successivi.
+Inizieremo filtrando l'immagine con un box filter. Ci sono modi più veloci di
+fare questo, ma noi lo implementeremo in maniera naif con una convoluzione,
+perché sarà lo stesso modo con cui opereremo i filtri successivi.
 
 ### 2.1 Create il vostro box-filter ###
 
@@ -70,44 +69,43 @@ Il box filter che abbiamo visto a lezione può essere rappresentato così:
 
 ![box filter](figs/boxfilter.png)
 
-un modo per implementarlo è creare un'immagine, riempirla con 1 e poi 
-normalizzarla. Quindi la prima funzione che realizzeremo è proprio quella di 
+un modo per implementarlo è creare un'immagine, riempirla con 1 e poi
+normalizzarla. Quindi la prima funzione che realizzeremo è proprio quella di
 normalizzazione.
 
-Completate `void l1_normalize(Image& im)` contenuto in `filter_image.cpp`. 
+Completate `void l1_normalize(Image& im)` contenuto in `filter_image.cpp`.
 Questo dovrebbe normalizzare la somma dei pixel dell'immagine a 1.
 
-Quindi completate `Image make_box_filter(int w)` contenuto in `filter_image.
-cpp`. Useremo sono box-filter quadrati, quindi la dimensione sarà `w x w` e 
-avrà un solo canale i cui pixel dovranno sommare a 1.
+Quindi completate `Image make_box_filter(int w)` contenuto
+in `filter_image. cpp`. Useremo sono box-filter quadrati, quindi la dimensione
+sarà `w x w` e avrà un solo canale i cui pixel dovranno sommare a 1.
 
 ### 2.2 Scrivete la funzione di convoluzioe ###
 
-**Chiamiamo questa funzione convoluzione, ma per essre matematicamente 
-corretti dovremmo ribaltare il filtro. In realtà stiamo implementando una 
+**Chiamiamo questa funzione convoluzione, ma per essre matematicamente corretti
+dovremmo ribaltare il filtro. In realtà stiamo implementando una
 cross-correlazione, ma vista la simmetria dei filtri non fa differenza. **
 Dovete implementare la formula discussa in classe:
 
 ![covolution](figs/convolution.png)
 
-Completate `Image convolve_image(const Image& im, const Image& filter, bool preserve)`.
-Per questa funzine ci sono due possibilità. Con le convoluzioni normali 
-facciamo una somma pesata su un'area dell'immagine. Con più canali teniamo 
-conto di più possibilità:
+Completate `Image convolve_image(const Image& im, const Image& filter, bool preserve)`
+. Per questa funzine ci sono due possibilità. Con le convoluzioni normali
+facciamo una somma pesata su un'area dell'immagine. Con più canali teniamo conto
+di più possibilità:
 
-- Se il parametro `preserve` è impostato a `true`, la funzioe dovrebbe 
-  produrre un immagine con lo stesso numero di canali dell'input. Questo è 
-  utile per esempio, se vogliamo applicare il box-filter ad un'immagine RGB 
-  per ottenere un'altra immagine RGB. Questo significa che ogni canale verrà 
-  filtrato separatamente dallo stesso kernel. 
-- Se `preserve` è a `false` dovremmo ritornare un'immagine con un solo 
-  canale prodotto applicndo il filtro and ogni canale e poi summandoli 
-  insieme in un unico canale. 
+- Se il parametro `preserve` è impostato a `true`, la funzioe dovrebbe produrre
+  un immagine con lo stesso numero di canali dell'input. Questo è utile per
+  esempio, se vogliamo applicare il box-filter ad un'immagine RGB per ottenere
+  un'altra immagine RGB. Questo significa che ogni canale verrà filtrato
+  separatamente dallo stesso kernel.
+- Se `preserve` è a `false` dovremmo ritornare un'immagine con un solo canale
+  prodotto applicndo il filtro and ogni canale e poi summandoli insieme in un
+  unico canale.
 
-Naturalmente, `filter` dovrebbe avere 1 canale. C'è un `assert` nel codice 
-che verifica questo.
-Quando avete finito, testate la convoluzione applicando il filtro alla 
-nostra immagine (`test_convolution` dentro `test1.cpp`).
+Naturalmente, `filter` dovrebbe avere 1 canale. C'è un `assert` nel codice che
+verifica questo. Quando avete finito, testate la convoluzione applicando il
+filtro alla nostra immagine (`test_convolution` dentro `test1.cpp`).
 
 L'output dovrebbe essere questo:
 
@@ -123,12 +121,11 @@ Resize                     |  Blur e Resize
 :-------------------------:|:-------------------------:
 ![](figs/dog7th-nn.png)    | ![](figs/dogthumb.png)
 
-### 2.3 Make some more filters and try them out! ###
+### 2.3 Altri filtri ###
 
-Fill in the functions `Image make_highpass_filter()`
-, `Image make_sharpen_filter()`, and `Image make_emboss_filter()` to return the
-example kernels we covered in class. Try them out on some images (Sections
-2.3-2.5 in test1.cpp)!
+Completate le funzioni `Image make_highpass_filter()`
+, `Image make_sharpen_filter()`, e `Image make_emboss_filter()`. Il primo lo 
+abbiamo visto a lezione, gli altri due sono nuovi.
 
 Highpass                   |  Sharpen                  | Emboss
 :-------------------------:|:-------------------------:|:--------------------|
@@ -136,27 +133,24 @@ Highpass                   |  Sharpen                  | Emboss
 :-------------------------:|:-------------------------:|:--------------------|
 ![](figs/dog-highpass.png)     | ![](figs/dog-sharpen.png)     | ![](figs/dog-emboss.png)
 
-### 2.4 Implement a Gaussian kernel ###
+### 2.4 Implementazione del kernel Gaussiano ###
 
-Implement `Image make_gaussian_filter(float sigma)` which will take a standard
-deviation value and return a filter that smooths using a gaussian with that
-sigma. How big should the filter be, you ask? 99% of the probability mass for a
-gaussian is within +/- 3 standard deviations so make the kernel be 6 times the
-size of sigma. But also we want an odd number, so make it be the next highest
-odd integer from 6x sigma.
+Implementate la funzione `Image make_gaussian_filter(float sigma)` che 
+prende una deviazione standard come input e ritorna un filtro gaussiano. 
+Quanto dovrebbe essere grande il kernel del filtro? il 99% dell'area di una 
+gaussiana si trova a +/- 3 deviazioni stadard, quindi il kernel deve essere 
+6 volte sigma. Allo stesso tempo, ricordatevi che il kernel deve avere un 
+numero dispari di righe e colonne, quindi sarà 6x sigma + 1.
 
-We need to fill in our kernel with some values. Use the probability density
-function for a 2d gaussian:
+Dobbiamo riempire i valori del kernel con dei valori. Usate la densità di 
+probabilità della gaussiana bidimensionale:
 
 ![2d gaussian](figs/2dgauss.png)
 
-Technically this isn't perfect, what we would really want to do is integrate
-over the area covered by each cell in the filter. But that's much more
-complicated and this is a decent estimate. Remember though, this is a blurring
-filter so we want all the weights to sum to 1. If only we had a function for
-that....
+Ovviamente questa è un'approssimazione, ma è efficace. Ricordate che la 
+simma dei coefficienti del filtro deve essere 1. 
 
-Now you should be able to try out your new blurring function(Section 2.6)!
+A questo punto il test della funzione di blur dovrebbe funzionare:
 
 ![blurred dog](figs/dog-gauss2.png)
 
