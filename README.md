@@ -317,3 +317,61 @@ Before                 |  After
 
 ![cat](figs/bilateral_cat.png)
 
+### 5 histogram equalization ###
+
+Ora vediamo un operazione puntuale, che non necessità di un contributo dei 
+pixel limitrofi, ma è realizzabile pixel per pixel. L'idea è quella di 
+cambiare l'intervallo dei valori dei pixel in modo da avere una 
+distribuzione più uniforme (anzi, proprio uniforme in senso probabilistico).
+
+Ogni pixel di ogni canale dell'immagine ha un valore tra 0 e 1, oppure, 
+quando lo salviamo in un formato RGB standard, da 0 a 255. 
+Laa statistica di quanti pixel ci sono per ciascun livello di intensità si 
+può calolare facilmente contando i pixel, valore per valore. Questo calcolo 
+equivale a calcolare l'istogramma del canale:
+
+![hist](figs/histogram_formula.png)
+
+Un istogramma è una distribuzione di probabilità empirica. Se voglio 
+renderla uniforme, devo utilizzare la sua funzione inversa, cioè la 
+Cumulative distribution function:
+
+![hist](figs/cdf_formula.png)
+
+che non è altro che l'integrale della funzione di densità di probabilità 
+(l'istogramma appunto). La trasformazione che cercate è questa:
+
+![hist](figs/transform.png)
+
+Da un punto di vista implementativo, un primo approccio può essere quello di 
+equalizzare i canali RGB singolarmente. Il risultato dovrebbe essere simile 
+a questo:
+
+![](data/equalized_rgb.png)
+
+Un approccio alternativo è quello di portare prima l'immagine in uno spazio 
+di colore come HSV o HSL e poi equalizzare solo il valore di luminanza o 
+Value. In questo modo l'equalizzaione influenzerà solo la luminosità, ma non 
+lo hue. I passi diventano:
+
+1. Convertire l'immagine a HSV
+2. equalizzare il canale value
+3. riportare l'immagine nello spazio RGB
+
+e il risultato dovrebbe essere questo:
+
+![](data/equalized_hsv.png)
+
+Completate le funzioni `Image histogram_equalization_rgb(const Image& im, 
+int num_bins)` e `Image histogram_equalization_rgb(const Image& im, int 
+num_bins)`. Il valore `num_bins` rappresenta il numero di valori in cui 
+quantizzare il range [0,1] quando si calcola l'istogramma e la sdf. In 
+pratica il valore più usato è 256. 
+
+Per implementare le due funzioni dovrete completare prima le funzioni 
+ausiliarie `float* compute_histogram(const Image& im, int ch, int num_bins)` e 
+`float* compute_CDF(float* hist, int num_bins)`. 
+
+Se tutto procede per il meglio, a questo punto il `test_equalization` 
+dovrebbe passare!
+

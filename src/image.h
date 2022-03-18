@@ -253,7 +253,8 @@ pair<Image,Image> sobel_image(const Image&  im);
 Image colorize_sobel(const Image&  im);
 Image smooth_image(const Image&  im, float sigma);
 Image bilateral_filter(const Image& im, float sigma, float sigma2);
-
+Image histogram_equalization_hsv(const Image& im, int num_bins);
+Image histogram_equalization_rgb(const Image& im, int num_bins);
 
 
 // Image manipulation
